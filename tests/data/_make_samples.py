@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Pedro Sordo Martínez <amurlaniakea@gmail.com>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """Generate reproducible test fixtures (sample.sdf + sample_native.{sdf,pdb}).
 
 Run from the repo root:  python3 tests/data/_make_samples.py

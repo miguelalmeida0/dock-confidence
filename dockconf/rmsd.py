@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Pedro Sordo Martínez <amurlaniakea@gmail.com>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """FR2: heavy-atom symmetric RMSD to native (RDKit AlignMol/GetBestRMS).
 
 Ground-truth definition follows AgenticPosesRanker Eq.10 / SS3.7.1:

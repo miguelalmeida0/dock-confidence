@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Pedro Sordo Martínez <amurlaniakea@gmail.com>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """Edge-case fixtures: real PDBQT + AutoDock .dlg sample text.
 
 These are synthetic but structurally valid, written once so the parser
