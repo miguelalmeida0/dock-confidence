@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Pedro Sordo Martínez <amurlaniakea@gmail.com>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """T12/T13: synthetic but CONTROLLED validation dataset.
 
 We cannot rely on a blocked external tarball (CASF-2016 / PDBbind return
