@@ -71,24 +71,34 @@ def cmd_calibrate(args):
 def cmd_validate(args):
     if args.fixture:
         from .data.fixture import make_fixture
-        poses, train = make_fixture(seed=args.seed, n_systems=args.n_systems)
+        fx = make_fixture(seed=args.seed, n_systems=args.n_systems)
+        # CRITICAL (AC7 fix): Platt is fit on train_poses; the evaluation
+        # set is test_poses, which is DISJOINT by system_id (0 overlap).
+        # Evaluating on fx.all_poses would leak the training systems in.
+        train = fx.train_poses
+        eval_poses = fx.test_poses
     else:
-        poses = read_poses(args.input, fmt=args.format)
+        eval_poses = read_poses(args.input, fmt=args.format)
         if args.native:
-            poses = annotate_rmsd(poses, args.native)
-        train = poses if args.train is None else _load_poses(args.train)
+            eval_poses = annotate_rmsd(eval_poses, args.native)
+        train = eval_poses if args.train is None else _load_poses(args.train)
     if args.mode == "platt" and train is not None:
-        poses = calibrate(poses, mode="platt", train=train)
+        # Fit on `train`, score the (disjoint) `eval_poses`.
+        eval_poses = calibrate(eval_poses, mode="platt", train=train)
     else:
-        poses = calibrate(poses, mode=args.mode)
-    ece_cal = expected_calibration_error(poses)
-    ece_raw = raw_score_ece(poses)
-    acc = top1_accuracy(poses)
-    rnd = random_baseline_accuracy(poses)
+        eval_poses = calibrate(eval_poses, mode=args.mode)
+    ece_cal = expected_calibration_error(eval_poses)
+    ece_raw = raw_score_ece(eval_poses)
+    acc = top1_accuracy(eval_poses)
+    rnd = random_baseline_accuracy(eval_poses)
     print("=" * 52)
     print(" dock-confidence :: validation report")
     print("=" * 52)
-    print(f" poses evaluated      : {len(poses)}")
+    print(f" poses evaluated      : {len(eval_poses)}")
+    if args.fixture and args.mode == "platt":
+        print(f" eval set             : HOLDOUT (0 system overlap w/ train)")
+        print(f"   train systems      : {len({p.system_id for p in fx.train_poses})}")
+        print(f"   test systems       : {len({p.system_id for p in fx.test_poses})}")
     print(f" ECE (calibrated)   : {ece_cal:.4f}")
     print(f" ECE (raw score)     : {ece_raw:.4f}")
     print(f" top-1 accuracy      : {acc:.3f}")
