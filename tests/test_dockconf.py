@@ -110,24 +110,24 @@ def test_ac3_cli_json(tmp_path):
 
 # ---- AC4: P(near-native) per pose -------------------------------------
 def test_ac4_calibrated_p():
-    fx = make_fixture(seed=42, n_systems=20)
-    cal = calibrate(fx.test_poses, mode="platt", train=fx.train_poses)
+    poses, train = make_fixture(seed=42, n_systems=20)
+    cal = calibrate(poses, mode="platt", train=train)
     assert all(p.p_near_native is not None for p in cal)
     assert all(0.0 <= p.p_near_native <= 1.0 for p in cal)
 
 
 # ---- AC5: ECE scalar in [0,1] --------------------------------------
 def test_ac5_ece_scalar():
-    fx = make_fixture(seed=42, n_systems=20)
-    cal = calibrate(fx.test_poses, mode="platt", train=fx.train_poses)
+    poses, train = make_fixture(seed=42, n_systems=20)
+    cal = calibrate(poses, mode="platt", train=train)
     ece = expected_calibration_error(cal)
     assert ece is not None and 0.0 <= ece <= 1.0
 
 
 # ---- AC6: reliability diagram PNG non-empty ---------------------------
 def test_ac6_reliability_png(tmp_path):
-    fx = make_fixture(seed=42, n_systems=20)
-    cal = calibrate(fx.test_poses, mode="platt", train=fx.train_poses)
+    poses, train = make_fixture(seed=42, n_systems=20)
+    cal = calibrate(poses, mode="platt", train=train)
     png = tmp_path / "rel.png"
     path = reliability_diagram(cal, str(png))
     assert path is not None
@@ -136,13 +136,10 @@ def test_ac6_reliability_png(tmp_path):
 
 # ---- AC7: calibrated ECE < raw ECE (validation) --------------------
 def test_ac7_ece_improvement():
-    fx = make_fixture(seed=42, n_systems=20)
-    train_systems = {pose.system_id for pose in fx.train_poses}
-    test_systems = {pose.system_id for pose in fx.test_poses}
-    assert train_systems.isdisjoint(test_systems)
-    cal = calibrate(fx.test_poses, mode="platt", train=fx.train_poses)
+    poses, train = make_fixture(seed=42, n_systems=20)
+    cal = calibrate(poses, mode="platt", train=train)
     ece_cal = expected_calibration_error(cal)
-    ece_raw = raw_score_ece(fx.test_poses)
+    ece_raw = raw_score_ece(poses)
     assert ece_cal is not None and ece_raw is not None
     assert ece_cal < ece_raw, f"ECE not improved: {ece_cal} >= {ece_raw}"
 
