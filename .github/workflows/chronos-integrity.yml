@@ -1,0 +1,18 @@
+name: Chronos integrity (Actions fallback)
+
+on:
+  pull_request:
+    branches: [chronos/base-ext013-exact]
+
+permissions:
+  contents: read
+
+jobs:
+  recurrence-guard-actions-fallback:
+    name: recurrence guard (Actions fallback)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+      - name: Evaluate installed Chronos policy
+        run: python .github/chronos_integrity_guard.py

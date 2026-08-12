@@ -1,0 +1,13 @@
+{
+  "schema": "chronos.policy.v1",
+  "policy_id": "chronos-ext013-disjoint-calibration-evaluation",
+  "coverage_mode": "COMPLETE",
+  "supported_paths": [
+    "dockconf/cli.py",
+    "dockconf/data/fixture.py",
+    "tests/test_dockconf.py"
+  ],
+  "rule_ids": ["CHRONOS-DISJOINT-EVALUATION-001"],
+  "required_check": "Chronos custom App check (externally blocked)",
+  "actions_fallback_check": "recurrence guard (Actions fallback)"
+}
