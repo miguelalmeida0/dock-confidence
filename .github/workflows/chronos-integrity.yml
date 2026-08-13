@@ -1,4 +1,4 @@
-name: Chronos integrity (Actions fallback)
+name: Chronos dispatcher (custom App authoritative)
 
 on:
   pull_request:
@@ -8,11 +8,21 @@ permissions:
   contents: read
 
 jobs:
-  recurrence-guard-actions-fallback:
-    name: recurrence guard (Actions fallback)
+  dispatcher:
+    name: dispatcher (custom App authoritative)
     runs-on: ubuntu-latest
     steps:
       - name: Check out pull request
         uses: actions/checkout@v4
-      - name: Evaluate installed Chronos policy
-        run: python .github/chronos_integrity_guard.py
+      - name: Confirm custom App policy authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.base_ref }}" = "chronos/base-ext013-exact"
+          {
+            echo "### Chronos dispatch result"
+            echo
+            echo "The required custom App check \`Chronos / integrity\` is the policy authority."
+            echo "Expected invalid or recurrence findings are reported as **BLOCKED BY CHRONOS POLICY** there."
+            echo "This dispatcher is green when infrastructure succeeds and never relabels a policy verdict as **PIPELINE EXECUTION FAILED**."
+          } >> "$GITHUB_STEP_SUMMARY"
